@@ -1,0 +1,30 @@
+<!-- マイルストーン項目 パーシャル -->
+<div class="milestone-item" id="milestone-<%= milestone.id %>">
+  <%= link_to toggle_task_milestone_path(task, milestone),
+      data: { turbo_method: :patch },
+      class: "milestone-check #{'checked' if milestone.completed?}" do %>
+    <% if milestone.completed? %>✓<% end %>
+  <% end %>
+
+  <div class="milestone-title <%= 'completed' if milestone.completed? %>">
+    <%= milestone.title %>
+  </div>
+
+  <% if milestone.due_date %>
+    <div class="milestone-due">
+      📅 <%= milestone.due_date.strftime("%m/%d") %>
+    </div>
+  <% end %>
+
+  <% if milestone.completed_at %>
+    <div class="milestone-due text-success">
+      ✓ <%= milestone.completed_at.strftime("%m/%d") %>
+    </div>
+  <% end %>
+
+  <div class="milestone-actions">
+    <%= link_to "✕", task_milestone_path(task, milestone),
+        data: { turbo_method: :delete, turbo_confirm: "このマイルストーンを削除しますか？" },
+        class: "milestone-delete" %>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<!-- 課金履歴ページ -->
+<div class="task-detail animate-fadeIn">
+  <div class="flex-between mb-2">
+    <div>
+      <h1 class="page-title">💳 課金履歴</h1>
+      <p class="page-subtitle">ペナルティとして課金された金額はすべて募金先へ寄付されます</p>
+    </div>
+    <a href="<%= new_payment_path %>" class="btn btn-secondary btn-sm">カード設定</a>
+  </div>
+
+  <!-- 統計 -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" style="background: var(--gradient-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        ¥<%= number_with_delimiter(@charges.where(status: :succeeded).sum(:amount)) %>
+      </div>
+      <div class="stat-label">課金総額</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value"><%= @charges.where(status: :succeeded).count %></div>
+      <div class="stat-label">課金回数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="background: var(--gradient-success); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        ¥<%= number_with_delimiter(@charges.where(status: :succeeded).sum(:amount)) %>
+      </div>
+      <div class="stat-label">寄付総額 ❤️</div>
+    </div>
+  </div>
+
+  <% if @charges.any? %>
+    <div class="card">
+      <div class="charge-list">
+        <% @charges.each do |charge| %>
+          <div class="charge-item">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div>
+                <div class="charge-amount <%= charge.status %>">
+                  ¥<%= number_with_delimiter(charge.amount) %>
+                </div>
+                <div class="text-muted" style="font-size: 0.78rem;">
+                  <%= charge.created_at.strftime("%Y/%m/%d %H:%M") %>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <% if charge.task %>
+                <a href="<%= task_path(charge.task) %>" class="text-muted" style="font-size: 0.85rem;">
+                  📋 <%= charge.task.title.truncate(20) %>
+                </a>
+              <% end %>
+              <span class="badge badge-<%= charge.succeeded? ? 'danger' : (charge.charge_pending? ? 'warning' : 'info') %>">
+                <% if charge.succeeded? %>
+                  課金完了
+                <% elsif charge.charge_pending? %>
+                  処理中
+                <% else %>
+                  失敗
+                <% end %>
+              </span>
+              <% if charge.donation_destination %>
+                <span class="badge badge-success">❤️ <%= charge.donation_destination %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state-icon">💳</div>
+      <div class="empty-state-text">課金履歴はまだありません</div>
+      <p class="text-muted">タスクの期限を守っている証拠です！🎉</p>
+    </div>
+  <% end %>
+</div>

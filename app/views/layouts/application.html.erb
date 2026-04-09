@@ -1,23 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
-    <title><%= content_for(:title) || "App" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskPenalty - タスク管理</title>
+    <meta name="description" content="タスクの期限管理にお金のプレッシャーを加えて確実な完了を促すアプリ">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
 
   <body>
-    <%= yield %>
+    <!-- ナビゲーション -->
+    <nav class="navbar" id="main-navbar">
+      <div class="navbar-brand">
+        <a href="<%= root_path %>" class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">TaskPenalty</span>
+        </a>
+      </div>
+
+      <% if user_signed_in? %>
+        <div class="navbar-menu">
+          <a href="<%= tasks_path(mode: 'amount') %>" class="nav-link <%= 'active' if current_mode == 'amount' && controller_name == 'tasks' %>">
+            💰 金額順
+          </a>
+          <a href="<%= tasks_path(mode: 'created') %>" class="nav-link <%= 'active' if current_mode == 'created' %>">
+            📋 制作順
+          </a>
+          <a href="<%= tasks_path(mode: 'daily') %>" class="nav-link <%= 'active' if current_mode == 'daily' %>">
+            📅 日別
+          </a>
+          <a href="<%= tasks_path(mode: 'monthly') %>" class="nav-link <%= 'active' if current_mode == 'monthly' %>">
+            🗓️ 月間
+          </a>
+        </div>
+
+        <div class="navbar-actions">
+          <a href="<%= new_task_path %>" class="btn btn-primary btn-sm">
+            ＋ 新規タスク
+          </a>
+          <a href="<%= payments_path %>" class="nav-link nav-icon" title="課金履歴">💳</a>
+          <div class="user-menu">
+            <% if current_user.avatar_url.present? %>
+              <img src="<%= current_user.avatar_url %>" alt="<%= current_user.name %>" class="user-avatar">
+            <% else %>
+              <div class="user-avatar-placeholder"><%= current_user.name&.first || "U" %></div>
+            <% end %>
+            <div class="user-dropdown" id="user-dropdown">
+              <div class="dropdown-header">
+                <strong><%= current_user.name %></strong>
+                <span class="text-muted"><%= current_user.email %></span>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="<%= new_payment_path %>" class="dropdown-item">
+                💳 カード設定
+                <% if current_user.card_registered? %>
+                  <span class="badge badge-success">登録済み</span>
+                <% else %>
+                  <span class="badge badge-warning">未登録</span>
+                <% end %>
+              </a>
+              <a href="<%= payments_path %>" class="dropdown-item">📊 課金履歴</a>
+              <hr class="dropdown-divider">
+              <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </nav>
+
+    <!-- フラッシュメッセージ -->
+    <% if notice %>
+      <div class="flash flash-notice" id="flash-notice">
+        <span><%= notice %></span>
+        <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="flash flash-alert" id="flash-alert">
+        <span><%= alert %></span>
+        <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+      </div>
+    <% end %>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content" id="main-content">
+      <%= yield %>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+      <p>TaskPenalty &copy; <%= Date.current.year %> — 期限を守るモチベーション管理ツール</p>
+    </footer>
   </body>
 </html>

@@ -55,3 +55,20 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# 認証 (Authentication)
+gem "devise"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
+# 決済 (Payment)
+gem "stripe"
+
+# バックグラウンドジョブ (Background Jobs)
+gem "solid_queue"
+
+# カレンダー表示 (Calendar)
+gem "simple_calendar", "~> 3.0"
+
+# 環境変数管理 (Environment Variables)
+gem "dotenv-rails", groups: [:development, :test]

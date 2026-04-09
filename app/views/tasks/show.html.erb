@@ -1,0 +1,147 @@
+<!-- タスク詳細ページ -->
+<div class="task-detail animate-fadeIn">
+  <div class="task-detail-header">
+    <div class="flex-between mb-2">
+      <a href="<%= tasks_path %>" class="btn btn-secondary btn-sm">← タスク一覧</a>
+      <div class="flex gap-1">
+        <a href="<%= edit_task_path(@task) %>" class="btn btn-secondary btn-sm">✏️ 編集</a>
+        <% unless @task.completed? || @task.charged? %>
+          <%= link_to "✓ 完了にする", complete_task_path(@task), data: { turbo_method: :patch, turbo_confirm: "このタスクを完了しますか？" }, class: "btn btn-success btn-sm" %>
+        <% end %>
+        <%= link_to "🗑️ 削除", task_path(@task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "btn btn-danger btn-sm" %>
+      </div>
+    </div>
+
+    <h1 class="page-title mt-2"><%= @task.title %></h1>
+
+    <div class="flex gap-1 mt-1 flex-wrap" style="align-items: center;">
+      <span class="task-status-badge status-<%= @task.status %>">
+        <%= case @task.status
+            when "pending" then "未着手"
+            when "in_progress" then "進行中"
+            when "completed" then "✓ 完了"
+            when "failed" then "失敗"
+            when "charged" then "💸 課金済"
+            end %>
+      </span>
+
+      <div class="priority-stars">
+        <% 5.times do |i| %>
+          <span class="priority-star <%= 'filled' if i < @task.priority %>">★</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- タスク情報カード -->
+  <div class="card mb-2">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem;">
+      <div>
+        <div class="text-muted mb-1" style="font-size: 0.8rem;">💰 ペナルティ金額</div>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-danger);">
+          <% if @task.penalty_amount.present? %>
+            ¥<%= number_with_delimiter(@task.penalty_amount) %>
+          <% else %>
+            設定なし
+          <% end %>
+        </div>
+      </div>
+      <div>
+        <div class="text-muted mb-1" style="font-size: 0.8rem;">📅 期限</div>
+        <div style="font-size: 1.1rem; font-weight: 600;">
+          <%= @task.due_date.strftime("%Y年%m月%d日") %>
+        </div>
+        <% if @task.days_remaining %>
+          <div style="font-size: 0.85rem;" class="<%= @task.overdue? ? 'text-danger' : (@task.days_remaining <= 3 ? 'text-warning' : 'text-success') %>">
+            <% if @task.overdue? %>
+              <%= @task.days_remaining.abs %>日超過 ⚠️
+            <% else %>
+              残り<%= @task.days_remaining %>日
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <% if @task.start_date %>
+        <div>
+          <div class="text-muted mb-1" style="font-size: 0.8rem;">🚀 開始日</div>
+          <div style="font-size: 1.1rem; font-weight: 600;">
+            <%= @task.start_date.strftime("%Y年%m月%d日") %>
+          </div>
+        </div>
+      <% end %>
+      <div>
+        <div class="text-muted mb-1" style="font-size: 0.8rem;">🎯 進捗</div>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-primary);">
+          <%= @task.milestone_progress %>%
+        </div>
+      </div>
+    </div>
+
+    <% if @task.description.present? %>
+      <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+      <div class="text-muted mb-1" style="font-size: 0.8rem;">📝 説明</div>
+      <p style="color: var(--text-secondary); line-height: 1.8;"><%= simple_format(@task.description) %></p>
+    <% end %>
+  </div>
+
+  <!-- マイルストーン -->
+  <div class="card">
+    <div class="flex-between mb-2">
+      <h2 style="font-size: 1.2rem; font-weight: 700;">🎯 マイルストーン</h2>
+      <span class="text-muted" style="font-size: 0.85rem;">
+        <%= @task.milestones.where(completed: true).count %>/<%= @task.milestones.count %> 完了
+      </span>
+    </div>
+
+    <% if @task.milestones.any? %>
+      <div class="progress-bar mb-2">
+        <div class="progress-bar-fill <%= 'complete' if @task.milestone_progress == 100 %>"
+             style="width: <%= @task.milestone_progress %>%"></div>
+      </div>
+    <% end %>
+
+    <div class="milestone-list" id="milestone-list">
+      <% @milestones.each do |milestone| %>
+        <%= render "milestones/milestone_item", milestone: milestone, task: @task %>
+      <% end %>
+    </div>
+
+    <!-- マイルストーン追加フォーム -->
+    <% unless @task.completed? || @task.charged? %>
+      <div class="mt-2">
+        <%= form_with(model: [@task, Milestone.new], class: "flex gap-1", style: "align-items: flex-end;") do |f| %>
+          <div style="flex: 1;">
+            <%= f.text_field :title, placeholder: "新しいマイルストーンを追加...", class: "form-input", required: true %>
+          </div>
+          <div style="width: 140px;">
+            <%= f.date_field :due_date, class: "form-input", placeholder: "期日" %>
+          </div>
+          <%= f.submit "追加", class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 課金履歴 -->
+  <% charges = @task.charges.recent %>
+  <% if charges.any? %>
+    <div class="card mt-2">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">💸 課金履歴</h2>
+      <div class="charge-list">
+        <% charges.each do |charge| %>
+          <div class="charge-item">
+            <div>
+              <div class="charge-amount <%= charge.status %>">¥<%= number_with_delimiter(charge.amount) %></div>
+              <div class="text-muted" style="font-size: 0.78rem;"><%= charge.created_at.strftime("%Y/%m/%d %H:%M") %></div>
+            </div>
+            <div>
+              <span class="badge badge-<%= charge.succeeded? ? 'danger' : (charge.charge_pending? ? 'warning' : 'info') %>">
+                <% if charge.succeeded? %>課金完了<% elsif charge.charge_pending? %>処理中<% else %>失敗<% end %>
+              </span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

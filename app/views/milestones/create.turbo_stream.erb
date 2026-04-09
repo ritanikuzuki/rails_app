@@ -1,0 +1,3 @@
+<%= turbo_stream.append "milestone-list" do %>
+  <%= render "milestones/milestone_item", milestone: @milestone, task: @task %>
+<% end %>

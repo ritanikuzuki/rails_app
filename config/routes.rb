@@ -1,14 +1,32 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Devise (認証)
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # ルート
+  root "tasks#index"
+
+  # タスク管理
+  resources :tasks do
+    resources :milestones, only: [:create, :update, :destroy] do
+      member do
+        patch :toggle
+      end
+    end
+    member do
+      patch :complete
+    end
+  end
+
+  # 決済
+  resources :payments, only: [:new, :create, :index] do
+    collection do
+      get :card_status
+    end
+  end
+
+  # Stripe Webhook
+  post "/webhooks/stripe", to: "webhooks#stripe"
+
+  # ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/*
-  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

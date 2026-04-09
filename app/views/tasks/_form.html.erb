@@ -1,0 +1,91 @@
+<!-- タスク作成/編集フォーム -->
+<div class="task-detail animate-fadeIn">
+  <div class="flex-between mb-2">
+    <h1 class="page-title"><%= @task.new_record? ? "✨ 新規タスク" : "✏️ タスク編集" %></h1>
+    <a href="<%= @task.new_record? ? tasks_path : task_path(@task) %>" class="btn btn-secondary btn-sm">← 戻る</a>
+  </div>
+
+  <div class="card">
+    <%= form_with(model: @task, local: true) do |f| %>
+      <% if @task.errors.any? %>
+        <div class="flash flash-alert mb-2">
+          <div>
+            <strong><%= @task.errors.count %>件のエラーがあります：</strong>
+            <ul style="margin-top: 0.25rem; padding-left: 1.25rem;">
+              <% @task.errors.full_messages.each do |msg| %>
+                <li style="font-size: 0.85rem;"><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- タスク名 -->
+      <div class="form-group">
+        <%= f.label :title, "タスク名", class: "form-label" %>
+        <%= f.text_field :title, class: "form-input", placeholder: "例: プレゼン資料の作成", required: true, autofocus: true %>
+      </div>
+
+      <!-- 説明 -->
+      <div class="form-group">
+        <%= f.label :description, "説明（任意）", class: "form-label" %>
+        <%= f.text_area :description, class: "form-textarea", placeholder: "タスクの詳細を入力...", rows: 4 %>
+      </div>
+
+      <div class="form-row">
+        <!-- 重要度 -->
+        <div class="form-group">
+          <%= f.label :priority, "重要度", class: "form-label" %>
+          <%= f.select :priority, [
+            ["★☆☆☆☆ 低い", 1],
+            ["★★☆☆☆ やや低い", 2],
+            ["★★★☆☆ 普通", 3],
+            ["★★★★☆ 高い", 4],
+            ["★★★★★ 最高", 5]
+          ], {}, { class: "form-select" } %>
+        </div>
+
+        <!-- ペナルティ金額 -->
+        <div class="form-group">
+          <%= f.label :penalty_amount, "💰 ペナルティ金額", class: "form-label" %>
+          <%= f.select :penalty_amount,
+            [[" 設定なし", nil]] + (100..5000).step(100).map { |n| ["¥#{number_with_delimiter(n)}", n] },
+            {}, { class: "form-select" } %>
+          <div class="form-hint">期限に間に合わなかった場合に課金される金額（100〜5,000円）</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- 開始日 -->
+        <div class="form-group">
+          <%= f.label :start_date, "開始日（任意）", class: "form-label" %>
+          <%= f.date_field :start_date, class: "form-input" %>
+        </div>
+
+        <!-- 期限 -->
+        <div class="form-group">
+          <%= f.label :due_date, "📅 期限", class: "form-label" %>
+          <%= f.date_field :due_date, class: "form-input", required: true %>
+        </div>
+      </div>
+
+      <!-- ステータス（編集時のみ） -->
+      <% unless @task.new_record? %>
+        <div class="form-group">
+          <%= f.label :status, "ステータス", class: "form-label" %>
+          <%= f.select :status, [
+            ["未着手", "pending"],
+            ["進行中", "in_progress"],
+            ["完了", "completed"]
+          ], {}, { class: "form-select" } %>
+        </div>
+      <% end %>
+
+      <!-- 送信ボタン -->
+      <div class="mt-3" style="display: flex; gap: 1rem;">
+        <%= f.submit(@task.new_record? ? "タスクを作成" : "変更を保存", class: "btn btn-primary btn-lg") %>
+        <a href="<%= @task.new_record? ? tasks_path : task_path(@task) %>" class="btn btn-secondary btn-lg">キャンセル</a>
+      </div>
+    <% end %>
+  </div>
+</div>

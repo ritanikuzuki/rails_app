@@ -1,0 +1,87 @@
+<!-- タスク一覧ページ -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">
+      <% case current_mode %>
+      <% when "amount" %>
+        💰 金額順タスク
+      <% when "created" %>
+        📋 制作順タスク
+      <% when "daily" %>
+        📅 日別タスク
+      <% when "monthly" %>
+        🗓️ 月間カレンダー
+      <% end %>
+    </h1>
+    <p class="page-subtitle">全 <%= current_user.tasks.count %> 件のタスク</p>
+  </div>
+  <a href="<%= new_task_path %>" class="btn btn-primary">＋ 新規タスク</a>
+</div>
+
+<!-- 統計カード -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value"><%= current_user.tasks.active.count %></div>
+    <div class="stat-label">進行中タスク</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= current_user.tasks.completed.count %></div>
+    <div class="stat-label">完了済み</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="background: var(--gradient-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      <%= current_user.tasks.active.where("due_date < ?", Date.current).count %>
+    </div>
+    <div class="stat-label">期限切れ</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      ¥<%= number_with_delimiter(current_user.tasks.active.sum(:penalty_amount)) %>
+    </div>
+    <div class="stat-label">リスク合計金額</div>
+  </div>
+</div>
+
+<% if current_mode == "daily" %>
+  <!-- 日別ナビゲーション -->
+  <div class="daily-nav">
+    <a href="<%= tasks_path(mode: 'daily', date: (@date - 1.day).to_s) %>" class="btn btn-secondary btn-sm">◀ 前日</a>
+    <div class="daily-date"><%= @date.strftime("%Y年%m月%d日（%a）") %></div>
+    <a href="<%= tasks_path(mode: 'daily', date: (@date + 1.day).to_s) %>" class="btn btn-secondary btn-sm">翌日 ▶</a>
+    <% if @date != Date.current %>
+      <a href="<%= tasks_path(mode: 'daily', date: Date.current.to_s) %>" class="btn btn-outline btn-sm">今日</a>
+    <% end %>
+  </div>
+<% end %>
+
+<% if current_mode == "monthly" %>
+  <!-- 月間カレンダー -->
+  <div class="calendar-nav">
+    <a href="<%= tasks_path(mode: 'monthly', month: (@month - 1.month).strftime('%Y-%m')) %>" class="btn btn-secondary btn-sm">◀ 前月</a>
+    <div class="calendar-nav-month"><%= @month.strftime("%Y年%m月") %></div>
+    <a href="<%= tasks_path(mode: 'monthly', month: (@month + 1.month).strftime('%Y-%m')) %>" class="btn btn-secondary btn-sm">翌月 ▶</a>
+  </div>
+
+  <%= render "tasks/calendar", tasks: @tasks, month: @month %>
+<% else %>
+  <!-- タスクリスト -->
+  <% if @tasks.any? %>
+    <div class="task-list">
+      <% @tasks.each do |task| %>
+        <%= render "tasks/task_card", task: task %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state-icon">📝</div>
+      <div class="empty-state-text">
+        <% if current_mode == "daily" %>
+          この日のタスクはありません
+        <% else %>
+          タスクがまだありません
+        <% end %>
+      </div>
+      <a href="<%= new_task_path %>" class="btn btn-primary">最初のタスクを作成する</a>
+    </div>
+  <% end %>
+<% end %>

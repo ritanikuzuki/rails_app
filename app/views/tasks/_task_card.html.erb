@@ -1,0 +1,65 @@
+<!-- タスクカード パーシャル -->
+<%= link_to task_path(task), class: "task-card priority-#{task.priority}", id: "task-#{task.id}" do %>
+  <div class="task-card-header">
+    <div>
+      <div class="task-title">
+        <span><%= task.title %></span>
+        <span class="task-status-badge status-<%= task.status %>">
+          <%= case task.status
+              when "pending" then "未着手"
+              when "in_progress" then "進行中"
+              when "completed" then "✓ 完了"
+              when "failed" then "失敗"
+              when "charged" then "💸 課金済"
+              end %>
+        </span>
+      </div>
+      <div class="priority-stars">
+        <% 5.times do |i| %>
+          <span class="priority-star <%= 'filled' if i < task.priority %>">★</span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if task.penalty_amount.present? && task.penalty_amount > 0 %>
+      <div class="task-penalty">¥<%= number_with_delimiter(task.penalty_amount) %></div>
+    <% end %>
+  </div>
+
+  <div class="task-meta">
+    <% if task.due_date %>
+      <div class="task-meta-item">
+        <span class="emoji">📅</span>
+        <span><%= task.due_date.strftime("%m/%d") %></span>
+      </div>
+    <% end %>
+
+    <% if task.days_remaining %>
+      <div class="task-meta-item">
+        <span class="emoji">⏳</span>
+        <% if task.overdue? %>
+          <span class="days-remaining overdue"><%= task.days_remaining.abs %>日超過</span>
+        <% elsif task.days_remaining <= 3 %>
+          <span class="days-remaining urgent">残り<%= task.days_remaining %>日</span>
+        <% else %>
+          <span class="days-remaining safe">残り<%= task.days_remaining %>日</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if task.milestones.any? %>
+      <div class="task-meta-item">
+        <span class="emoji">🎯</span>
+        <span><%= task.milestones.where(completed: true).count %>/<%= task.milestones.count %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if task.milestones.any? %>
+    <div class="progress-bar">
+      <div class="progress-bar-fill <%= 'complete' if task.milestone_progress == 100 %>"
+           style="width: <%= task.milestone_progress %>%">
+      </div>
+    </div>
+  <% end %>
+<% end %>
