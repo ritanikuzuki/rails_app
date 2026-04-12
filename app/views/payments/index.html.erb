@@ -1,15 +1,61 @@
-<!-- 課金履歴ページ -->
+<!-- 課金履歴＆カード管理ページ -->
 <div class="task-detail animate-fadeIn">
   <div class="flex-between mb-2">
     <div>
-      <h1 class="page-title">💳 課金履歴</h1>
-      <p class="page-subtitle">ペナルティとして課金された金額はすべて募金先へ寄付されます</p>
+      <h1 class="page-title">💳 支払い設定と履歴</h1>
+      <p class="page-subtitle">カードの管理と、これまでの課金履歴を確認できます</p>
     </div>
-    <a href="<%= new_payment_path %>" class="btn btn-secondary btn-sm">カード設定</a>
+    <a href="<%= new_payment_path %>" class="btn btn-primary btn-sm">+ カードを追加</a>
   </div>
 
+  <!-- カード管理セクション -->
+  <div class="section-title mb-1">登録済みのカード</div>
+  <div class="card mb-3">
+    <% if @payment_methods.any? %>
+      <div class="card-list">
+        <% @payment_methods.each do |pm| %>
+          <div class="card-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div class="card-icon" style="font-size: 1.5rem;">
+                <%= case pm.card.brand
+                    when "visa" then "💳"
+                    when "mastercard" then "💳"
+                    when "jcb" then "💳"
+                    else "💳"
+                    end %>
+              </div>
+              <div>
+                <div style="font-weight: 600; text-transform: capitalize;">
+                  <%= pm.card.brand %> **** <%= pm.card.last4 %>
+                  <% if pm.id == @default_payment_method_id %>
+                    <span class="badge badge-success" style="margin-left: 0.5rem;">メイン</span>
+                  <% end %>
+                </div>
+                <div class="text-muted" style="font-size: 0.75rem;">
+                  有効期限: <%= pm.card.exp_month %>/<%= pm.card.exp_year %>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem;">
+              <% if pm.id != @default_payment_method_id %>
+                <%= button_to "メインに設定", make_default_payment_path(pm.id), method: :patch, class: "btn btn-secondary btn-sm" %>
+              <% end %>
+              <%= button_to "削除", destroy_card_payment_path(pm.id), method: :delete, data: { confirm: "このカードを削除しますか？" }, class: "btn btn-outline-danger btn-sm" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div style="padding: 2rem; text-align: center;" class="text-muted">
+        登録されているカードはありません
+      </div>
+    <% end %>
+  </div>
+
+  <div class="section-title mb-1">課金・寄付履歴</div>
   <!-- 統計 -->
-  <div class="stats-grid">
+  <div class="stats-grid mb-2">
     <div class="stat-card">
       <div class="stat-value" style="background: var(--gradient-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
         ¥<%= number_with_delimiter(@charges.where(status: :succeeded).sum(:amount)) %>
@@ -68,9 +114,8 @@
     </div>
   <% else %>
     <div class="empty-state">
-      <div class="empty-state-icon">💳</div>
+       <div class="empty-state-icon">📄</div>
       <div class="empty-state-text">課金履歴はまだありません</div>
-      <p class="text-muted">タスクの期限を守っている証拠です！🎉</p>
     </div>
   <% end %>
 </div>

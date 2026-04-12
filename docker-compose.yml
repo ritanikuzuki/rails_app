@@ -22,6 +22,20 @@ services:
     depends_on:
       - db
 
+  worker:
+    build: .
+    environment:
+      SECRET_KEY_BASE: dummy
+      RAILS_ENV: development
+    env_file:
+      - .env.development
+    command: bundle exec rake solid_queue:start
+    volumes:
+      - .:/app
+      - bundle-data:/usr/local/bundle
+    depends_on:
+      - db
+
 volumes:
   db-data:
   bundle-data:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_10_000004) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_12_163506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,7 +33,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_10_000004) do
     t.bigint "task_id", null: false
     t.string "title", null: false
     t.boolean "completed", default: false
-    t.date "due_date"
+    t.datetime "due_date"
     t.integer "position", default: 0
     t.datetime "completed_at"
     t.datetime "created_at", null: false
@@ -49,8 +49,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_10_000004) do
     t.integer "penalty_amount"
     t.integer "priority", default: 3, null: false
     t.integer "status", default: 0, null: false
-    t.date "start_date"
-    t.date "due_date", null: false
+    t.datetime "start_date"
+    t.datetime "due_date", null: false
     t.datetime "completed_at"
     t.boolean "charged", default: false
     t.datetime "created_at", null: false

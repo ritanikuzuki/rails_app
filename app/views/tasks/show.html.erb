@@ -49,12 +49,14 @@
       <div>
         <div class="text-muted mb-1" style="font-size: 0.8rem;">📅 期限</div>
         <div style="font-size: 1.1rem; font-weight: 600;">
-          <%= @task.due_date.strftime("%Y年%m月%d日") %>
+          <%= @task.due_date.strftime("%Y/%m/%d %H:%M") %>
         </div>
         <% if @task.days_remaining %>
-          <div style="font-size: 0.85rem;" class="<%= @task.overdue? ? 'text-danger' : (@task.days_remaining <= 3 ? 'text-warning' : 'text-success') %>">
+          <div style="font-size: 0.85rem;" class="<%= @task.overdue? ? 'text-danger' : (@task.hours_remaining <= 12 ? 'text-danger' : (@task.days_remaining <= 3 ? 'text-warning' : 'text-success')) %>">
             <% if @task.overdue? %>
-              <%= @task.days_remaining.abs %>日超過 ⚠️
+              期限切れ ⚠️
+            <% elsif @task.hours_remaining < 24 %>
+              残り時間: <%= @task.hours_remaining %>時間
             <% else %>
               残り<%= @task.days_remaining %>日
             <% end %>
@@ -65,7 +67,7 @@
         <div>
           <div class="text-muted mb-1" style="font-size: 0.8rem;">🚀 開始日</div>
           <div style="font-size: 1.1rem; font-weight: 600;">
-            <%= @task.start_date.strftime("%Y年%m月%d日") %>
+            <%= @task.start_date.strftime("%Y/%m/%d %H:%M") %>
           </div>
         </div>
       <% end %>
@@ -113,8 +115,8 @@
           <div style="flex: 1;">
             <%= f.text_field :title, placeholder: "新しいマイルストーンを追加...", class: "form-input", required: true %>
           </div>
-          <div style="width: 140px;">
-            <%= f.date_field :due_date, class: "form-input", placeholder: "期日" %>
+          <div style="width: 180px;">
+            <%= f.datetime_field :due_date, class: "form-input", placeholder: "期日" %>
           </div>
           <%= f.submit "追加", class: "btn btn-primary btn-sm" %>
         <% end %>

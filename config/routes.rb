@@ -22,6 +22,10 @@ Rails.application.routes.draw do
     collection do
       get :card_status
     end
+    member do
+      patch :make_default
+      delete :destroy_card
+    end
   end
 
   # Stripe Webhook

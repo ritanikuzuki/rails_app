@@ -1,9 +1,9 @@
 development:
   deadline_check:
     class: DeadlineCheckJob
-    schedule: every day at 0:00 Asia/Tokyo
+    schedule: every 1.minute
 
 production:
   deadline_check:
     class: DeadlineCheckJob
-    schedule: every day at 0:00 Asia/Tokyo
+    schedule: every 1.minute

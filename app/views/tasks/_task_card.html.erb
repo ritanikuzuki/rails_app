@@ -30,7 +30,7 @@
     <% if task.due_date %>
       <div class="task-meta-item">
         <span class="emoji">📅</span>
-        <span><%= task.due_date.strftime("%m/%d") %></span>
+        <span><%= task.due_date.strftime("%m/%d %H:%M") %></span>
       </div>
     <% end %>
 
@@ -38,7 +38,9 @@
       <div class="task-meta-item">
         <span class="emoji">⏳</span>
         <% if task.overdue? %>
-          <span class="days-remaining overdue"><%= task.days_remaining.abs %>日超過</span>
+          <span class="days-remaining overdue">期限切れ</span>
+        <% elsif task.hours_remaining < 24 %>
+          <span class="days-remaining urgent"><%= task.hours_remaining %>時間</span>
         <% elsif task.days_remaining <= 3 %>
           <span class="days-remaining urgent">残り<%= task.days_remaining %>日</span>
         <% else %>

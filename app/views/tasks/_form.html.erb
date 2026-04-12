@@ -56,16 +56,15 @@
       </div>
 
       <div class="form-row">
-        <!-- 開始日 -->
         <div class="form-group">
-          <%= f.label :start_date, "開始日（任意）", class: "form-label" %>
-          <%= f.date_field :start_date, class: "form-input" %>
+          <%= f.label :start_date, "開始日時（任意）", class: "form-label" %>
+          <%= f.datetime_field :start_date, class: "form-input" %>
         </div>
 
         <!-- 期限 -->
         <div class="form-group">
           <%= f.label :due_date, "📅 期限", class: "form-label" %>
-          <%= f.date_field :due_date, class: "form-input", required: true %>
+          <%= f.datetime_field :due_date, class: "form-input", required: true %>
         </div>
       </div>
 

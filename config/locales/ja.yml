@@ -1,0 +1,67 @@
+ja:
+  number:
+    format:
+      separator: "."
+      delimiter: ","
+      precision: 3
+      index: 0
+      significant: false
+      strip_insignificant_zeros: false
+    currency:
+      format:
+        format: "%u%n"
+        unit: "¥"
+        separator: "."
+        delimiter: ","
+        precision: 0
+        significant: false
+        strip_insignificant_zeros: false
+  datetime:
+    distance_in_words:
+      half_a_minute: "30秒前後"
+      less_than_x_minutes:
+        one: "1分以内"
+        other: "%{count}分以内"
+      x_minutes:
+        one: "1分"
+        other: "%{count}分"
+      about_x_hours:
+        one: "約1時間"
+        other: "約%{count}時間"
+      x_days:
+        one: "1日"
+        other: "%{count}日"
+      about_x_months:
+        one: "約1ヶ月"
+        other: "約%{count}ヶ月"
+      x_months:
+        one: "1ヶ月"
+        other: "%{count}ヶ月"
+      about_x_years:
+        one: "約1年"
+        other: "約%{count}年"
+      over_x_years:
+        one: "1年以上"
+        other: "%{count}年以上"
+  devise:
+    omniauth_callbacks:
+      success: "Google アカウントからログインしました。"
+      failure: "%{kind} からの承認に失敗しました。理由: %{reason}"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_in: "既にログインしています。"
+    registrations:
+      signed_up: "アカウント登録が完了しました。"
+      updated: "アカウント情報を変更しました。"
+      destroyed: "アカウントを削除しました。"
+    passwords:
+      send_instructions: "パスワードのリセット方法を記載したメールをお送りします。"
+      updated: "パスワードが正しく変更されました。"
+    prompts:
+      year: "年"
+      month: "月"
+      day: "日"
+      hour: "時"
+      minute: "分"
+      second: "秒"
