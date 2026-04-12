@@ -51,7 +51,7 @@ class StripeChargeService
       amount: task.penalty_amount,
       stripe_charge_id: payment_intent.id,
       status: payment_intent.status == "succeeded" ? :succeeded : :charge_pending,
-      donation_destination: "募金先団体"
+      donation_destination: task.donation_destination.presence || "募金先未指定"
     )
 
     # タスクのステータスを更新
@@ -67,7 +67,7 @@ class StripeChargeService
       amount: task.penalty_amount,
       stripe_charge_id: nil,
       status: :charge_failed,
-      donation_destination: "募金先団体"
+      donation_destination: task.donation_destination.presence || "募金先未指定"
     )
 
     task.update!(status: :failed)

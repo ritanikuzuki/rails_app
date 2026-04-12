@@ -56,6 +56,21 @@
       </div>
 
       <div class="form-row">
+        <!-- 募金先 -->
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <%= f.label :donation_destination, "❤️ 課金時の募金先", class: "form-label" %>
+          <%= f.select :donation_destination, [
+            ["日本赤十字社", "日本赤十字社"],
+            ["日本ユニセフ協会", "日本ユニセフ協会"],
+            ["国境なき医師団", "国境なき医師団"],
+            ["WWFジャパン", "WWFジャパン"],
+            ["あしなが育英会", "あしなが育英会"]
+          ], { prompt: "募金先を選択してください" }, { class: "form-select" } %>
+          <div class="form-hint">ペナルティが発生した場合、この団体に課金（寄付）されます</div>
+        </div>
+      </div>
+
+      <div class="form-row">
         <div class="form-group">
           <%= f.label :start_date, "開始日時（任意）", class: "form-label" %>
           <%= f.datetime_field :start_date, class: "form-input" %>

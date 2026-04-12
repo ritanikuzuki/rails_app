@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_12_175335) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_12_182801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -223,6 +223,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_12_175335) do
     t.boolean "charged", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "donation_destination"
     t.index ["due_date", "status", "charged"], name: "index_tasks_on_due_date_and_status_and_charged"
     t.index ["user_id", "due_date"], name: "index_tasks_on_user_id_and_due_date"
     t.index ["user_id", "penalty_amount"], name: "index_tasks_on_user_id_and_penalty_amount"
