@@ -16,9 +16,11 @@ class Task < ApplicationRecord
   # スコープ（表示モード対応）
   scope :by_amount, -> { order(penalty_amount: :desc, created_at: :desc) }
   scope :by_created, -> { order(created_at: :desc) }
-  scope :by_date, ->(date) { where(due_date: date).order(priority: :desc) }
+  scope :by_date, ->(date) {
+    where(due_date: date.beginning_of_day..date.end_of_day).order(priority: :desc)
+  }
   scope :by_month, ->(date) {
-    where(due_date: date.beginning_of_month..date.end_of_month).order(due_date: :asc)
+    where(due_date: date.beginning_of_month.beginning_of_day..date.end_of_month.end_of_day).order(due_date: :asc)
   }
   scope :active, -> { where.not(status: [:completed, :charged]) }
   scope :overdue_and_uncharged, -> {

@@ -712,6 +712,13 @@ a:hover {
   min-height: 100px;
   position: relative;
   transition: background var(--transition-fast);
+  display: block;
+  cursor: pointer;
+}
+
+a.calendar-day {
+  color: inherit;
+  text-decoration: none;
 }
 
 .calendar-day:hover {

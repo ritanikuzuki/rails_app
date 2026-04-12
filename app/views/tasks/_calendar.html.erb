@@ -4,12 +4,12 @@
   start_date = month.beginning_of_month.beginning_of_week(:sunday)
   end_date = month.end_of_month.end_of_week(:sunday)
 
-  # タスクを日付でグループ化
-  tasks_by_date = tasks.group_by(&:due_date)
+  # タスクを「日付（Date）」でグループ化 ← due_dateがdatetimeなので.to_dateで変換
+  tasks_by_date = tasks.group_by { |t| t.due_date.to_date }
 
   # マイルストーンも取得して日付でグループ化
   all_milestones = Milestone.joins(:task).where(tasks: { id: tasks.pluck(:id) }).where.not(due_date: nil)
-  milestones_by_date = all_milestones.group_by(&:due_date)
+  milestones_by_date = all_milestones.group_by { |ms| ms.due_date.to_date }
 
   day_names = %w[日 月 火 水 木 金 土]
 %>
@@ -20,15 +20,25 @@
   <% end %>
 
   <% (start_date..end_date).each do |date| %>
-    <div class="calendar-day <%= 'today' if date == Date.current %> <%= 'other-month' if date.month != month.month %>">
+    <%# セル全体をクリックしたら日別モードに遷移 %>
+    <a href="<%= tasks_path(mode: 'daily', date: date.to_s) %>"
+       class="calendar-day <%= 'today' if date == Date.current %> <%= 'other-month' if date.month != month.month %>"
+       style="text-decoration: none; display: block; color: inherit;">
       <div class="calendar-date"><%= date.day %></div>
 
       <% if tasks_by_date[date] %>
         <% tasks_by_date[date].first(3).each do |task| %>
-          <a href="<%= task_path(task) %>"
-             class="calendar-task <%= 'overdue' if task.overdue? %> <%= 'completed' if task.completed? %>">
-            <%= task.title.truncate(12) %>
-          </a>
+          <div class="calendar-task <%= 'overdue' if task.overdue? %> <%= 'completed' if task.completed? %>"
+               style="display: flex; justify-content: space-between; align-items: center; gap: 2px;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">
+              <%= task.title.truncate(10) %>
+            </span>
+            <% if task.penalty_amount.present? && task.penalty_amount > 0 %>
+              <span style="font-size: 0.6rem; color: var(--accent-danger); white-space: nowrap; flex-shrink: 0;">
+                ¥<%= task.penalty_amount %>
+              </span>
+            <% end %>
+          </div>
         <% end %>
         <% if tasks_by_date[date].size > 3 %>
           <div class="calendar-task" style="text-align: center;">+<%= tasks_by_date[date].size - 3 %>件</div>
@@ -42,6 +52,6 @@
           </div>
         <% end %>
       <% end %>
-    </div>
+    </a>
   <% end %>
 </div>
