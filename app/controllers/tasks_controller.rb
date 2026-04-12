@@ -6,17 +6,19 @@ class TasksController < ApplicationController
 
     case current_mode
     when "amount"
-      @tasks = @tasks.by_amount
+      @tasks = @tasks.where.not(status: :charged).by_amount
     when "created"
-      @tasks = @tasks.by_created
+      @tasks = @tasks.where.not(status: :charged).by_created
     when "daily"
       @date = params[:date] ? Date.parse(params[:date]) : Date.current
-      @tasks = @tasks.by_date(@date)
+      @tasks = @tasks.where.not(status: :charged).by_date(@date)
     when "monthly"
       @month = params[:month] ? Date.parse("#{params[:month]}-01") : Date.current
       @tasks = @tasks.by_month(@month)
+    when "charged"
+      @tasks = @tasks.where(status: :charged).order(updated_at: :desc)
     else
-      @tasks = @tasks.by_amount
+      @tasks = @tasks.where.not(status: :charged).by_amount
     end
   end
 

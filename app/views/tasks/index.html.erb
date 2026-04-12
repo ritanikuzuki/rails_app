@@ -10,7 +10,9 @@
       <% when "daily" %>
         📅 日別タスク
       <% when "monthly" %>
-        🗓️ 月間カレンダー
+        🗓️ カレンダー
+      <% when "charged" %>
+        💸 課金済タスク
       <% end %>
     </h1>
     <p class="page-subtitle">全 <%= current_user.tasks.count %> 件のタスク</p>

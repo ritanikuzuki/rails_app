@@ -38,7 +38,10 @@
             📅 日別
           </a>
           <a href="<%= tasks_path(mode: 'monthly') %>" class="nav-link <%= 'active' if current_mode == 'monthly' %>">
-            🗓️ 月間
+            🗓️ カレンダー
+          </a>
+          <a href="<%= tasks_path(mode: 'charged') %>" class="nav-link <%= 'active' if current_mode == 'charged' %>">
+            💸 課金済
           </a>
         </div>
 

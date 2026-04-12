@@ -57,10 +57,10 @@
   <!-- 統計 -->
   <div class="stats-grid mb-2">
     <div class="stat-card">
-      <div class="stat-value" style="background: var(--gradient-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-        ¥<%= number_with_delimiter(@charges.where(status: :succeeded).sum(:amount)) %>
+      <div class="stat-value" style="background: var(--gradient-success); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        ¥<%= number_with_delimiter(current_user.tasks.completed.sum(:penalty_amount)) %>
       </div>
-      <div class="stat-label">課金総額</div>
+      <div class="stat-label">課金を回避した総額</div>
     </div>
     <div class="stat-card">
       <div class="stat-value"><%= @charges.where(status: :succeeded).count %></div>
