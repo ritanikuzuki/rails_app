@@ -58,7 +58,7 @@ class Task < ApplicationRecord
   private
 
   def due_date_must_be_at_least_five_minutes_in_the_future
-    if due_date.present? && due_date < Time.current + 5.minutes
+    if due_date_changed? && due_date.present? && due_date < Time.current + 5.minutes
       errors.add(:due_date, "設定時間が短すぎます")
     end
   end

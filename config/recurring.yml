@@ -1,9 +1,9 @@
 development:
   deadline_check:
     class: DeadlineCheckJob
-    schedule: every 1.minute
+    schedule: "every minute"
 
 production:
   deadline_check:
     class: DeadlineCheckJob
-    schedule: every 1.minute
+    schedule: "every minute"

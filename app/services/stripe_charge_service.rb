@@ -5,11 +5,26 @@ class StripeChargeService
     user = task.user
     return unless user.card_registered?
 
+    customer = Stripe::Customer.retrieve(user.stripe_customer_id)
+    payment_method_id = customer.invoice_settings.default_payment_method
+    if payment_method_id.nil?
+      pms = Stripe::PaymentMethod.list(customer: user.stripe_customer_id, type: "card")
+      payment_method_id = pms.data.first&.id
+    end
+
+    if payment_method_id.nil?
+      Rails.logger.error "Task ##{task.id}: Payment method not found for customer #{user.stripe_customer_id}"
+      task.update!(status: :failed)
+      return nil
+    end
+
     # PaymentIntent を作成（ユーザーのカードから課金）
     payment_intent_params = {
       amount: task.penalty_amount,
       currency: "jpy",
       customer: user.stripe_customer_id,
+      payment_method: payment_method_id,
+      off_session: true,
       confirm: true,
       automatic_payment_methods: {
         enabled: true,
