@@ -12,11 +12,29 @@
     </p>
 
     <div style="background: rgba(255, 167, 38, 0.1); border: 1px solid rgba(255, 167, 38, 0.3); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem;">
-      <div style="color: var(--accent-warning); font-weight: 600; margin-bottom: 0.5rem;">⚠️ テストモード</div>
-      <p style="color: var(--text-secondary); font-size: 0.85rem;">
-        現在テストモードです。実際の課金は発生しません。<br>
-        テストカード番号: <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">4242 4242 4242 4242</code><br>
-        有効期限: 任意の将来日付 / CVC: 任意の3桁
+      <div style="color: var(--accent-warning); font-weight: 600; margin-bottom: 0.75rem;">⚠️ テストモード — 実際の課金は発生しません</div>
+      <table style="color: var(--text-secondary); font-size: 0.85rem; border-collapse: collapse; width: 100%;">
+        <tr>
+          <td style="padding: 0.3rem 0.75rem 0.3rem 0; white-space: nowrap; color: var(--text-muted);">カード番号</td>
+          <td><code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; letter-spacing: 0.05em;">4242 4242 4242 4242</code></td>
+        </tr>
+        <tr>
+          <td style="padding: 0.3rem 0.75rem 0.3rem 0; white-space: nowrap; color: var(--text-muted);">有効期限</td>
+          <td>
+            <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">12 / 26</code>
+            <span style="font-size: 0.8rem; margin-left: 0.5rem; color: var(--accent-warning);">※ 月2桁 / 年2桁（将来の日付）</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.3rem 0.75rem 0.3rem 0; white-space: nowrap; color: var(--text-muted);">CVC</td>
+          <td>
+            <code style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">123</code>
+            <span style="font-size: 0.8rem; margin-left: 0.5rem; color: var(--accent-warning);">※ 必ず3桁入力</span>
+          </td>
+        </tr>
+      </table>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.75rem;">
+        ⚠️ 有効期限は過去の年・月だとエラーになります。CVCも3桁必要です。
       </p>
     </div>
 
@@ -36,9 +54,13 @@
       </button>
     </form>
 
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
+
+    <script id="stripe-init-script">
+      // turbo:load はTurboナビゲーション時にも発火する（DOMContentLoadedの代替）
+      document.addEventListener('turbo:load', function initStripe() {
+        const cardEl = document.getElementById('card-element');
+        if (!cardEl || cardEl.dataset.stripeReady) return; // 二重初期化を防ぐ
+        cardEl.dataset.stripeReady = 'true';
         const stripe = Stripe('<%= ENV["STRIPE_PUBLISHABLE_KEY"] %>');
         const elements = stripe.elements();
 
