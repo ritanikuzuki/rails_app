@@ -743,6 +743,29 @@ a.calendar-day {
   object-fit: contain;
 }
 
+/* ドロップゾーンのエフェクト */
+.drop-zone {
+  min-width: 200px;
+  padding: 0.75rem 1.5rem;
+  border: 2px dashed var(--accent-success);
+  background: rgba(0, 184, 148, 0.05);
+  transition: all var(--transition-medium);
+  text-align: center;
+}
+
+.drop-zone:hover {
+  background: rgba(0, 184, 148, 0.1);
+  transform: translateY(-2px);
+}
+
+.drop-zone--over {
+  background: var(--accent-success);
+  color: white !important;
+  border-style: solid;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 184, 148, 0.4);
+}
+
 .calendar-day.today {
   background: rgba(108, 92, 231, 0.1);
 }

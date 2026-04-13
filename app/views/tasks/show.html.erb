@@ -8,10 +8,20 @@
         <% unless @task.completed? || @task.charged? %>
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <%= form_with(model: @task, url: complete_task_path(@task), method: :patch, local: true, class: "flex gap-05") do |f| %>
-              <label class="btn btn-outline-success btn-sm" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
-                📷 写真を選択
-                <%= f.file_field :completion_image, class: "hidden-input", accept: "image/*", onchange: "this.form.submit();", style: "display:none;" %>
-              </label>
+              <div data-controller="drag-drop">
+                <label class="btn btn-outline-success btn-sm drop-zone" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                  📷 写真を撮って完了
+                  <%= f.file_field :completion_image, 
+                                  class: "hidden-input", 
+                                  accept: "image/*", 
+                                  capture: "environment", 
+                                  data: { 
+                                    drag_drop_target: "input",
+                                    action: "change->drag-drop#submitForm"
+                                  },
+                                  style: "display:none;" %>
+                </label>
+              </div>
             <% end %>
           </div>
         <% end %>
