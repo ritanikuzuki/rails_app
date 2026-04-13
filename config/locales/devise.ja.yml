@@ -1,0 +1,18 @@
+ja:
+  devise:
+    failure:
+      already_authenticated: "すでにログインしています。"
+      unauthenticated: "継続するには、ログインまたは登録が必要です。"
+      unconfirmed: "継続するには、アカウントを確認する必要があります。"
+      locked: "アカウントがロックされています。"
+      invalid: "メールアドレスまたはパスワードが違います。"
+      invalid_token: "認証トークンが不正です。"
+      timeout: "セッションがタイムアウトしました。もう一度ログインしてください。"
+      inactive: "アカウントがまだ有効化されていません。"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_out: "すでにログアウトしています。"
+    omniauth_callbacks:
+      failure: "%{kind} アカウントによる認証に失敗しました。理由: %{reason}"
+      success: "%{kind} アカウントによる認証に成功しました。"
