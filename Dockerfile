@@ -11,17 +11,21 @@ RUN apt-get update -qq && \
       curl libjemalloc2 libvips postgresql-client build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
-# 環境変数（開発用ならdevelopmentでもOK）
-ENV RAILS_ENV=development \
-    SECRET_KEY_BASE=dummy \
+# 環境変数（本番用）
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT=development:test \
     BUNDLE_PATH=/usr/local/bundle
 
 # Gemのインストール
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-# アプリコードをコピー（volumeで上書きされる想定）
+# アプリコードをコピー
 COPY . .
+
+# アセットのプリコンパイル（SECRET_KEY_BASEはダミーでOK）
+RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
 
 # サーバー起動
 EXPOSE 3000
