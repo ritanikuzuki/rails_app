@@ -6,7 +6,14 @@
       <div class="flex gap-1">
         <a href="<%= edit_task_path(@task) %>" class="btn btn-secondary btn-sm">✏️ 編集</a>
         <% unless @task.completed? || @task.charged? %>
-          <%= link_to "✓ 完了にする", complete_task_path(@task), data: { turbo_method: :patch, turbo_confirm: "このタスクを完了しますか？" }, class: "btn btn-success btn-sm" %>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <%= form_with(model: @task, url: complete_task_path(@task), method: :patch, local: true, class: "flex gap-05") do |f| %>
+              <label class="btn btn-outline-success btn-sm" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                📷 写真を選択
+                <%= f.file_field :completion_image, class: "hidden-input", accept: "image/*", onchange: "this.form.submit();", style: "display:none;" %>
+              </label>
+            <% end %>
+          </div>
         <% end %>
         <%= link_to "🗑️ 削除", task_path(@task), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "btn btn-danger btn-sm" %>
       </div>
@@ -83,6 +90,14 @@
       <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
       <div class="text-muted mb-1" style="font-size: 0.8rem;">📝 説明</div>
       <p style="color: var(--text-secondary); line-height: 1.8;"><%= simple_format(@task.description) %></p>
+    <% end %>
+
+    <% if @task.completion_image.attached? %>
+      <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+      <div class="text-muted mb-1" style="font-size: 0.8rem;">📸 完了証拠写真</div>
+      <div class="completion-evidence">
+        <%= image_tag @task.completion_image.variant(resize_to_limit: [800, 800]), class: "evidence-img", loading: "lazy" %>
+      </div>
     <% end %>
   </div>
 

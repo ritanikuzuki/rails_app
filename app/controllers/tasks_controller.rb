@@ -59,8 +59,16 @@ class TasksController < ApplicationController
   end
 
   def complete
-    @task.mark_complete!
-    redirect_to @task, notice: "タスクを完了しました！🎉"
+    if params[:task] && params[:task][:completion_image]
+      @task.completion_image.attach(params[:task][:completion_image])
+    end
+
+    if @task.completion_image.attached?
+      @task.mark_complete!
+      redirect_to @task, notice: "タスクを完了しました！証拠写真を保存しました。🎉"
+    else
+      redirect_to @task, alert: "タスクを完了するには証拠写真のアップロードが必要です。"
+    end
   end
 
   private
@@ -70,6 +78,6 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title, :description, :penalty_amount, :priority, :start_date, :due_date, :status, :donation_destination)
+    params.require(:task).permit(:title, :description, :penalty_amount, :priority, :start_date, :due_date, :status, :donation_destination, :completion_image)
   end
 end

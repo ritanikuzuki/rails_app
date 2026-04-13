@@ -2,6 +2,7 @@ class Task < ApplicationRecord
   belongs_to :user
   has_many :milestones, dependent: :destroy
   has_many :charges, dependent: :destroy
+  has_one_attached :completion_image
 
   # ステータス管理
   enum :status, { pending: 0, in_progress: 1, completed: 2, failed: 3, charged: 4 }

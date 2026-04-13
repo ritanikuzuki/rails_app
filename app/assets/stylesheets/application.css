@@ -725,6 +725,24 @@ a.calendar-day {
   background: var(--bg-card-hover);
 }
 
+/* 証拠写真のスタイル */
+.completion-evidence {
+  margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  max-width: 100%;
+}
+
+.evidence-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+}
+
 .calendar-day.today {
   background: rgba(108, 92, 231, 0.1);
 }
