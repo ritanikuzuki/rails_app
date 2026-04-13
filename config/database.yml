@@ -7,13 +7,25 @@ default: &default
   pool: 5
 
 development:
-  <<: *default
-  database: app_development
+  primary:
+    <<: *default
+    database: app_development
+  queue:
+    <<: *default
+    database: app_development_queue
 
 test:
-  <<: *default
-  database: app_test
+  primary:
+    <<: *default
+    database: app_test
+  queue:
+    <<: *default
+    database: app_test_queue
 
 production:
-  <<: *default
-  database: app_production
+  primary:
+    <<: *default
+    database: app_production
+  queue:
+    <<: *default
+    database: app_production_queue
