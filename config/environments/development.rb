@@ -81,4 +81,7 @@ Rails.application.configure do
 
   # Use Solid Queue for background jobs
   config.active_job.queue_adapter = :solid_queue
+
+  # 開発環境でのホスト制限を解除（AWSのIPアドレス変更に対応）
+  config.hosts.clear
 end
